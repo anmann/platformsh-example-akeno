@@ -6,8 +6,13 @@ name: akeneo
 
 # The type of the application to build.
 type: php:7.0
-build:
-  flavor: composer
+
+runtime:
+    # PHP Extensions
+    extensions:
+        - apcu
+        - mcrypt
+
 
 # The relationships of the application with services or other applications.
 # The left-hand side is the name of the relationship as it will be exposed
@@ -16,14 +21,6 @@ build:
 relationships:
     database: "mysqlakeneo:mysql"
 
-# The configuration of app when it is exposed to the web.
-web:
-    locations:
-        "/":
-            # The public directory of the app, relative to its root.
-            root: "web"
-            # The front-controller script to send non-static requests to.
-            passthru: "/app.php"
 
 # The size of the persistent disk of the application (in MB).
 disk: 2048
@@ -43,6 +40,10 @@ mounts:
     "web/js":               "shared:files/web-js"
     "web/media":            "shared:files/web-media"
 
+# Configuration of the build of this application.
+build:
+  flavor: composer
+
 # The hooks that will be performed when the package is deployed.
 hooks:
     build: |
@@ -51,8 +52,12 @@ hooks:
         app/console --env=prod cache:clear
         app/console pim:installer:assets --env=prod
 
-runtime:
-    # PHP Extensions
-    extensions:
-        - apcu
-        - mcrypt
+
+# The configuration of app when it is exposed to the web.
+web:
+    locations:
+        "/":
+            # The public directory of the app, relative to its root.
+            root: "web"
+            # The front-controller script to send non-static requests to.
+            passthru: "/app.php"
